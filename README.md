@@ -1,3 +1,5 @@
+[![.NET](https://github.com/jacobduijzer/IgniteSlideExpress/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jacobduijzer/IgniteSlideExpress/actions/workflows/dotnet.yml)
+
 # Ignite Slide Express
 
 Ignite Slide Express is intended to be used for Ignite talks: talks where you have a maximum of 20 slides, and 5 minutes. The slides will auto-advance, no time to stop. It is used for conferences like the DevOpsDays. 
