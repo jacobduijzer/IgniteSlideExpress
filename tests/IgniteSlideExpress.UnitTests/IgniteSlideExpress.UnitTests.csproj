@@ -22,4 +22,9 @@
         </PackageReference>
     </ItemGroup>
 
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\IgniteSlideExpress.Domain\IgniteSlideExpress.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
