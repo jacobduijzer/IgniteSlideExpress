@@ -6,4 +6,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\IgniteSlideExpress.Domain\IgniteSlideExpress.Domain.csproj" />
+      <ProjectReference Include="..\IgniteSlideExpress.Infrastructure\IgniteSlideExpress.Infrastructure.csproj" />
+    </ItemGroup>
+
+
+
 </Project>
