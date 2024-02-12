@@ -1,7 +1,141 @@
 ﻿@page "/"
+@using IgniteSlideExpress.Domain
+@using IgniteSlideExpress.Application
+@inject CreateTalkHandler CreateTalkHandler 
+@inject GetSessionHandler GetSessionHandler
+@inject TalkPositionHandler TalkPositionHandler
 
 <PageTitle>Ignite Slide Express</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container">
 
-Welcome to your new app.
+    <EditForm Model=@_talk OnSubmit="FormSubmitted">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Speaker</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (_session != null)
+            {
+                foreach (var talk in _session.Talks.Select((value, i) => new { i, value }))
+                {
+                    <tr>
+                        <td>
+                            <NavLink class="nav-link" href="@($"presentation/{talk.value.Id}")">
+                                @talk.value.Title
+                            </NavLink>
+                        </td>
+                        <td>@talk.value.Speaker</td>
+                        <td>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-sm">
+                                    @if (talk.i > 0)
+                                    {
+                                        <span class="oi oi-arrow-circle-top" aria-hidden="true" @onclick="() => MoveUp(talk.value.Id)"></span>
+                                    }
+                                </div>
+                                <div class="col-sm">
+                                    @if (talk.i < _session.Talks.Count - 1)
+                                    {
+                                        <span class="oi oi-arrow-circle-bottom" aria-hidden="true" @onclick="() => MoveDown(talk.value.Id)"></span>
+                                    }
+                                </div>
+                                <div class="col-sm">
+                                    <span class="oi oi-circle-x" aria-hidden="true" @onclick="() => Delete(talk.value.Id)"></span>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td>
+                    <InputText @bind-Value="_talk.Title"/>
+                </td>
+                <td>
+                    <InputText @bind-Value="_talk.Speaker"/>
+                </td>
+                <td>
+                    <InputFile OnChange="@LoadFiles"/>
+                </td>
+                <td>
+                    <input type="submit" value="Submit" class="btn btn-primary" disabled="@_isDisabled"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </EditForm>
+</div>
+
+@code {
+
+    private readonly TalkDTO _talk = new();
+    private readonly List<IBrowserFile> _loadedFiles = new();
+    private bool _isDisabled = true;
+    private Session? _session;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _session = await LoadSessions();
+    }
+
+    private async Task<Session> LoadSessions()
+    {
+        return await GetSessionHandler.Handle(new GetSessionHandler.GetSessionCommand());
+    }
+
+    private void LoadFiles(InputFileChangeEventArgs e)
+    {
+    // isLoading = true;
+        _loadedFiles.Clear();
+
+        foreach (var file in e.GetMultipleFiles())
+        {
+            try
+            {
+                _loadedFiles.Add(file);
+            }
+            catch (Exception ex)
+            {
+    // Logger.LogError("File: {FileName} Error: {Error}", 
+    // file.Name, ex.Message);
+            }
+        }
+
+    // isLoading = false;
+        _isDisabled = false;
+    }
+
+    private async Task FormSubmitted()
+    {
+        await CreateTalkHandler.Handle(new CreateTalkHandler.CreateTalkCommand(_talk.Title, _talk.Speaker, _loadedFiles));
+        _session = await LoadSessions();
+    }
+
+    private async Task MoveUp(Guid talkId)
+    {
+        await TalkPositionHandler.Handle(new TalkPositionHandler.TalkPositionCommand(talkId, TalkPositionHandler.Direction.Up));
+        _session = await LoadSessions();
+    }
+
+    private async Task MoveDown(Guid talkId)
+    {
+        await TalkPositionHandler.Handle(new TalkPositionHandler.TalkPositionCommand(talkId, TalkPositionHandler.Direction.Down));
+        _session = await LoadSessions();
+    }
+
+    private async Task Delete(Guid talkId)
+    {
+    // await SessionRepository.Remove(talkId);
+        _session = await LoadSessions();
+    }
+
+}

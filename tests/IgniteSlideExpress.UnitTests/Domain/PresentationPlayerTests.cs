@@ -21,7 +21,7 @@ public class PresentationPlayerTests
     {
         // ARRANGE
         PresentationPlayer player = new(new Infrastructure.Timer());
-        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", new List<string>());
+        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", 0);
 
         // ACT
         player.Add(talk);
@@ -35,13 +35,12 @@ public class PresentationPlayerTests
     [InlineData("1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg", 60)]
     [InlineData("1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg, 6.jpg, 7.jpg, 8.jpg, 9.jpg, 10.jpg", 30)]
     [InlineData(
-        "1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg, 6.jpg, 7.jpg, 8.jpg, 9.jpg, 10.jpg, 11.jpg, 12.jpg, 13.jpg, 14.jpg, 15.jpg, 16.jpg, 17.jpg, 18.jpg, 19.jpg, 20.jpg",
-        15)]
+        "1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg, 6.jpg, 7.jpg, 8.jpg, 9.jpg, 10.jpg, 11.jpg, 12.jpg, 13.jpg, 14.jpg, 15.jpg, 16.jpg, 17.jpg, 18.jpg, 19.jpg, 20.jpg", 15)]
     public void CanCalculateTimings(string images, int intervalTiming)
     {
         // ARRANGE
         PresentationPlayer player = new(new Infrastructure.Timer());
-        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", images.Split(",").ToList());
+        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", images.Split(",").Count());
 
         // ACT
         player.Add(talk);
@@ -55,7 +54,7 @@ public class PresentationPlayerTests
     {
         // ARRANGE
         PresentationPlayer player = new(new Infrastructure.Timer());
-        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", new List<string> { "1.jpg", "2.jpg" });
+        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", 2);
         player.Add(talk);
         
         // ACT
@@ -73,7 +72,7 @@ public class PresentationPlayerTests
         mockTimer.Setup(i => i.Start(It.IsAny<double>())).Raises(i => i.SheetTimeElapsed += null, EventArgs.Empty);
 
         PresentationPlayer player = new(mockTimer.Object);
-        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", new List<string> { "1.jpg", "2.jpg" });
+        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", 2);
         player.Add(talk);
 
         // ACT
@@ -95,7 +94,7 @@ public class PresentationPlayerTests
         var mockTimer = new Mock<ITimer>();
         mockTimer.Setup(i => i.Start(It.IsAny<double>())).Raises(i => i.SheetTimeElapsed += null, EventArgs.Empty);
         PresentationPlayer player = new(mockTimer.Object);
-        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", new List<string> { "1.jpg", "2.jpg" });
+        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", 2);
         player.Add(talk);
         
         // ACT
@@ -112,7 +111,7 @@ public class PresentationPlayerTests
         var mockTimer = new Mock<ITimer>();
         
         PresentationPlayer player = new(mockTimer.Object);
-        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", new List<string> { "1.jpg", "2.jpg" });
+        Talk talk = new(Guid.NewGuid(), "Test Title", "Test Speaker", 2);
         player.Add(talk);
         player.Start();
         

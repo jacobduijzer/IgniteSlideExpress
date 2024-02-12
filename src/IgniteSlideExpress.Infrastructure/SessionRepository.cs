@@ -7,7 +7,7 @@ public class SessionRepository : ISessionRepository
 {
     private const string DataFile = "sessionData.json";
     
-    public async Task<Session?> Load()
+    public async Task<Session> Load()
     {
         return await Create();
     }
@@ -45,7 +45,7 @@ public class SessionRepository : ISessionRepository
         await Save(session);
     }
 
-    private async Task<Session?> Create()
+    private async Task<Session> Create()
     {
         if (!File.Exists(DataFile))
             await Save(new Session());
@@ -53,7 +53,7 @@ public class SessionRepository : ISessionRepository
         using StreamReader reader = new(DataFile);
         var json = await reader.ReadToEndAsync();
         var session = JsonSerializer.Deserialize<Session>(json);
-        return session;
+        return session!;
     }
 
     private static async Task Save(Session session)

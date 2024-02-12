@@ -25,8 +25,11 @@
 
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\IgniteSlideExpress.Application\IgniteSlideExpress.Application.csproj" />
       <ProjectReference Include="..\..\src\IgniteSlideExpress.Domain\IgniteSlideExpress.Domain.csproj" />
       <ProjectReference Include="..\..\src\IgniteSlideExpress.Infrastructure\IgniteSlideExpress.Infrastructure.csproj" />
     </ItemGroup>
+
+
 
 </Project>

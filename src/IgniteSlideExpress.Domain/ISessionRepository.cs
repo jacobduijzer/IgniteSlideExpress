@@ -2,7 +2,7 @@ namespace IgniteSlideExpress.Domain;
 
 public interface ISessionRepository
 {
-    Task<Session?> Load();
+    Task<Session> Load();
 
     Task AddFiles<T>(Talk talk, List<T> files);
    

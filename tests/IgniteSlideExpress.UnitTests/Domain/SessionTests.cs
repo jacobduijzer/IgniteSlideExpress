@@ -11,7 +11,7 @@ public class SessionTests
         Session session = new();
 
         // ACT2
-        session.Add(new Talk(Guid.NewGuid(),"Talk 1", "Speaker 1", new List<string>()));
+        session.Add(new Talk(Guid.NewGuid(),"Talk 1", "Speaker 1", 0));
 
         // ASSERT
         Assert.Equal(1, session.Talks.Count);
@@ -22,10 +22,10 @@ public class SessionTests
     {
         // ARRANGE
         Session session = new();
-        session.Add(new Talk(Guid.NewGuid(), "Title", "Speaker", new List<string>()));
+        session.Add(new Talk(Guid.NewGuid(), "Title", "Speaker", 0));
         
         // ACT & ASSERT
-        Assert.Throws<Exception>(() => session.Add(new Talk(Guid.NewGuid(), "Title", "Speaker", new List<string>())));
+        Assert.Throws<Exception>(() => session.Add(new Talk(Guid.NewGuid(), "Title", "Speaker", 0)));
     }
     
     [Fact]
@@ -33,8 +33,8 @@ public class SessionTests
     {
         // ARRANGE
         Session session = new();
-        Talk talk1  = new (Guid.NewGuid(), "Talk 1", "Speaker 1", new List<string>());
-        Talk talk2  = new (Guid.NewGuid(), "Talk 2", "Speaker 2", new List<string>());
+        Talk talk1  = new (Guid.NewGuid(), "Talk 1", "Speaker 1", 0);
+        Talk talk2  = new (Guid.NewGuid(), "Talk 2", "Speaker 2", 0);
         session.Add(talk1);
         session.Add(talk2);
         
@@ -50,8 +50,8 @@ public class SessionTests
     {
         // ARRANGE
         Session session = new();
-        Talk talk1  = new (Guid.NewGuid(), "Talk 1", "Speaker 1", new List<string>());
-        Talk talk2  = new (Guid.NewGuid(),"Talk 2", "Speaker 2", new List<string>());
+        Talk talk1  = new (Guid.NewGuid(), "Talk 1", "Speaker 1", 0);
+        Talk talk2  = new (Guid.NewGuid(),"Talk 2", "Speaker 2", 0);
         session.Add(talk1);
         session.Add(talk2);
         

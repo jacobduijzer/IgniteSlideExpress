@@ -17,7 +17,7 @@ public class PresentationPlayer
     }
 
     public int IntervalTiming =>
-        (int)TimeSpan.FromMinutes(MaxDurationInMinutes).TotalSeconds / Talk!.Images.Count;
+        (int)TimeSpan.FromMinutes(MaxDurationInMinutes).TotalSeconds / Talk!.NumberOfPages;
 
     public void Add(Talk talk) => Talk = talk;
 
@@ -42,7 +42,7 @@ public class PresentationPlayer
         CurrentImage = Talk!.NextImage();
         SheetTimeElapsed?.Invoke(this, e);
         
-        if (CurrentImage.Equals(Talk!.Images.Last()))
+        if (Talk!.LastPageShown)
             Stop();
     } 
 }
