@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Components.Forms" Version="8.0.1" />
       <PackageReference Include="PDFtoImage" Version="3.1.0" />
     </ItemGroup>
 

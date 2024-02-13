@@ -11,6 +11,7 @@ builder.Services.AddSingleton<IPdf2Images, Pdf2Images>();
 builder.Services.AddSingleton<CreateTalkHandler>();
 builder.Services.AddSingleton<GetSessionHandler>();
 builder.Services.AddSingleton<TalkPositionHandler>();
+builder.Services.AddSingleton<RemoveTalkHandler>();
 builder.Services.AddSingleton(new PresentationPlayer(new IgniteSlideExpress.Infrastructure.Timer()));
 
 var app = builder.Build();

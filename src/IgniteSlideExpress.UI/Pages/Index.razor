@@ -4,6 +4,7 @@
 @inject CreateTalkHandler CreateTalkHandler 
 @inject GetSessionHandler GetSessionHandler
 @inject TalkPositionHandler TalkPositionHandler
+@inject RemoveTalkHandler RemoveTalkHandler
 
 <PageTitle>Ignite Slide Express</PageTitle>
 
@@ -15,7 +16,7 @@
             <tr>
                 <th>Title</th>
                 <th>Speaker</th>
-                <th></th>
+                <th>Slides</th>
                 <th></th>
             </tr>
             </thead>
@@ -31,8 +32,7 @@
                             </NavLink>
                         </td>
                         <td>@talk.value.Speaker</td>
-                        <td>
-                        </td>
+                        <td>@talk.value.NumberOfSlides</td>
                         <td>
                             <div class="row">
                                 <div class="col-sm">
@@ -89,7 +89,7 @@
 
     private async Task<Session> LoadSessions()
     {
-        return await GetSessionHandler.Handle(new GetSessionHandler.GetSessionCommand());
+        return await GetSessionHandler.Handle(new GetSessionHandler.GetSessionQuery());
     }
 
     private void LoadFiles(InputFileChangeEventArgs e)
@@ -134,7 +134,7 @@
 
     private async Task Delete(Guid talkId)
     {
-    // await SessionRepository.Remove(talkId);
+        await RemoveTalkHandler.Handle(new RemoveTalkHandler.RemoveTalkCommand(talkId));
         _session = await LoadSessions();
     }
 

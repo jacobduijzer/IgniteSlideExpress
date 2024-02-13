@@ -12,7 +12,7 @@ public class GetSessionHandlerTests
         GetSessionHandler handler = new(new SessionRepository());
 
         // ACT
-        var session = await handler.Handle(new GetSessionHandler.GetSessionCommand());
+        var session = await handler.Handle(new GetSessionHandler.GetSessionQuery());
 
         // ASSERT
         Assert.NotNull(session); 

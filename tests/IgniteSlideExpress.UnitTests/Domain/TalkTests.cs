@@ -37,7 +37,7 @@ public class TalkTests
             talk.NextImage();
         
         // ASSERT
-        Assert.True(talk.LastPageShown);
+        Assert.True(talk.LastSlideShown);
     }
     
 }

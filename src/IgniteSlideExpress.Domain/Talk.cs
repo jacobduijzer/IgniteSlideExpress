@@ -1,20 +1,20 @@
 namespace IgniteSlideExpress.Domain;
 
-public record Talk(Guid Id, string Title, string Speaker, int NumberOfPages)
+public record Talk(Guid Id, string Title, string Speaker, int NumberOfSlides)
 {
-    private int _currentImage;
+    private int _currentSlide;
 
-    public bool LastPageShown { get; private set; }
+    public bool LastSlideShown { get; private set; }
 
     public string? NextImage()
     {
-        if (!LastPageShown)
+        if (!LastSlideShown)
         {
-            _currentImage++;
-            if (_currentImage == NumberOfPages)
-                LastPageShown = true;
+            _currentSlide++;
+            if (_currentSlide == NumberOfSlides)
+                LastSlideShown = true;
         }
             
-        return $"{_currentImage}.jpg";
+        return $"{_currentSlide}.jpg";
     }
 }
