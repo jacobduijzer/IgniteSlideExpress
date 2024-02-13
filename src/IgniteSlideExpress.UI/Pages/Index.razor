@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using IgniteSlideExpress.Domain
 @using IgniteSlideExpress.Application
+@using IgniteSlideExpress.Infrastructure
 @inject CreateTalkHandler CreateTalkHandler 
 @inject GetSessionHandler GetSessionHandler
 @inject TalkPositionHandler TalkPositionHandler
@@ -94,7 +95,7 @@
 
     private void LoadFiles(InputFileChangeEventArgs e)
     {
-    // isLoading = true;
+        // isLoading = true;
         _loadedFiles.Clear();
 
         foreach (var file in e.GetMultipleFiles())
@@ -116,7 +117,9 @@
 
     private async Task FormSubmitted()
     {
-        await CreateTalkHandler.Handle(new CreateTalkHandler.CreateTalkCommand(_talk.Title, _talk.Speaker, _loadedFiles));
+        // TODO: change this to something better
+        var pdfFile = await new UploadFileProcessor(_loadedFiles).Process();
+        await CreateTalkHandler.Handle(new CreateTalkHandler.CreateTalkCommand(_talk.Title, _talk.Speaker, pdfFile));
         _session = await LoadSessions();
     }
 

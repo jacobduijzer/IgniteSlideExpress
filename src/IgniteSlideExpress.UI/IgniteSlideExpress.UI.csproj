@@ -10,7 +10,6 @@
       <ProjectReference Include="..\IgniteSlideExpress.Application\IgniteSlideExpress.Application.csproj" />
       <ProjectReference Include="..\IgniteSlideExpress.Domain\IgniteSlideExpress.Domain.csproj" />
       <ProjectReference Include="..\IgniteSlideExpress.Infrastructure\IgniteSlideExpress.Infrastructure.csproj" />
-      <Folder Include="wwwroot\presentations\" />
     </ItemGroup>
 
 </Project>

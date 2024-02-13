@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
-builder.Services.AddSingleton<IPdf2Images, Pdf2Images>();
+builder.Services.AddSingleton<IPdf2Slides, Pdf2Slides>();
 builder.Services.AddSingleton<CreateTalkHandler>();
 builder.Services.AddSingleton<GetSessionHandler>();
 builder.Services.AddSingleton<TalkPositionHandler>();
