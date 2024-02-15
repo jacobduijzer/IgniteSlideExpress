@@ -12,4 +12,51 @@
       <ProjectReference Include="..\IgniteSlideExpress.Infrastructure\IgniteSlideExpress.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\1.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\10.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\11.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\12.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\13.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\14.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\15.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\16.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\17.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\18.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\19.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\2.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\20.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\3.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\5.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\6.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\7.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\8.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\9.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\1.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\10.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\11.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\12.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\13.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\14.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\15.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\16.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\17.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\18.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\19.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\2.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\20.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\3.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\5.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\6.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\7.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\8.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\9.jpg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\presentations\" />
+    </ItemGroup>
+
 </Project>
