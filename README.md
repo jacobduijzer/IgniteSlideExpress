@@ -8,7 +8,13 @@ With Ignite Slide Express, you can create talks, upload PDF's and start the pres
 
 ## Getting started
 
-TODO
+Run the project as a docker container:
+
+```bash
+docker run -it --rm -p 3000:8080 jacobduijzer/igniteslideexpress:latest
+```
+
+Open a browser and go to [http://localhost:3000](http://localhost:3000) to open the application.
 
 ## Sources
 
