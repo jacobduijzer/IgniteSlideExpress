@@ -67,6 +67,13 @@ a, .btn-link {
     content: "An error has occurred."
 }
 
+.centered-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 .presentationImage {
     width: 100%;
     max-width: 100%;

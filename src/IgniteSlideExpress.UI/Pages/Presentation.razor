@@ -6,35 +6,55 @@
 
 <PageTitle>Ignite Slide Express</PageTitle>
 
-<button type="button" @onclick="() => Start()">Start</button>
-<button type="button" @onclick="() => Stop()">Stop</button>
-<br />
+<div class="centered-grid">
+    <table class="table-responsive-lg">
+        <tbody>
+        <tr>
+            <td>
+                <h1>@(Talk != null ? Talk.Title : string.Empty)</h1>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h2>@(Talk != null ? Talk.Speaker : string.Empty)</h2>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center">
+                <button type="button" @onclick="() => Start()">Start</button>
+                <button type="button" @onclick="() => Stop()">Stop</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<br/>
 
 <img class="presentationImage" src="@(Image)" alt="Presentation Images"/>
 
 @code {
-    private Talk _talk;
 
     [Parameter]
     public Guid? TalkId { get; set; }
-    
+
+    public Talk Talk { get; private set; }
     public string Image { get; private set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (TalkId.HasValue && _talk == null)
+        if (TalkId.HasValue && Talk == null)
         {
             var session = await SessionRepository.Load();
-            _talk = session!.Talks.FirstOrDefault(x => x != null && x.Id.Equals(TalkId.Value));
-            if (_talk == null)
+            Talk = session!.Talks.FirstOrDefault(x => x != null && x.Id.Equals(TalkId.Value));
+            if (Talk == null)
                 throw new Exception($"There is no talk with id {TalkId.Value}.");
-
         }
     }
-    
+
     private void Start()
     {
-        PresentationPlayer.Add(_talk);
+        PresentationPlayer.Add(Talk);
         PresentationPlayer.SheetTimeElapsed += PresentationPlayerOnSheetTimeElapsed;
         PresentationPlayer.Start();
         Image = Path.Combine("/", "presentations", TalkId.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
@@ -51,4 +71,5 @@
         Image = Path.Combine("/", "presentations", TalkId.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
         await InvokeAsync(StateHasChanged);
     }
+
 }
