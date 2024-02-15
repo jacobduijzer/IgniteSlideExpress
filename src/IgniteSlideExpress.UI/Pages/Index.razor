@@ -1,7 +1,6 @@
 ﻿@page "/"
 @using IgniteSlideExpress.Domain
 @using IgniteSlideExpress.Application
-@using IgniteSlideExpress.Infrastructure
 @inject CreateTalkHandler CreateTalkHandler 
 @inject GetSessionHandler GetSessionHandler
 @inject TalkPositionHandler TalkPositionHandler
@@ -28,7 +27,7 @@
                 {
                     <tr>
                         <td>
-                            <NavLink class="nav-link" href="@($"presentation/{talk.value.Id}")">
+                            <NavLink class="nav-link" href="@($"presentation/{talk.value.Id}")" target="_blank">
                                 @talk.value.Title
                             </NavLink>
                         </td>

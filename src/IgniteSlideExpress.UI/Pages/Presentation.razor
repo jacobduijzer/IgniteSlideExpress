@@ -1,0 +1,54 @@
+﻿@page "/presentation/{TalkId:guid}"
+@using IgniteSlideExpress.Domain
+@inject ISessionRepository SessionRepository
+@inject PresentationPlayer PresentationPlayer
+@layout EmptyPageLayout
+
+<PageTitle>Ignite Slide Express</PageTitle>
+
+<button type="button" @onclick="() => Start()">Start</button>
+<button type="button" @onclick="() => Stop()">Stop</button>
+<br />
+
+<img class="presentationImage" src="@(Image)" alt="Presentation Images"/>
+
+@code {
+    private Talk _talk;
+
+    [Parameter]
+    public Guid? TalkId { get; set; }
+    
+    public string Image { get; private set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TalkId.HasValue && _talk == null)
+        {
+            var session = await SessionRepository.Load();
+            _talk = session!.Talks.FirstOrDefault(x => x != null && x.Id.Equals(TalkId.Value));
+            if (_talk == null)
+                throw new Exception($"There is no talk with id {TalkId.Value}.");
+
+        }
+    }
+    
+    private void Start()
+    {
+        PresentationPlayer.Add(_talk);
+        PresentationPlayer.SheetTimeElapsed += PresentationPlayerOnSheetTimeElapsed;
+        PresentationPlayer.Start();
+        Image = Path.Combine("/", "presentations", TalkId.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
+    }
+
+    private void Stop()
+    {
+        PresentationPlayer.Stop();
+        PresentationPlayer.SheetTimeElapsed -= PresentationPlayerOnSheetTimeElapsed;
+    }
+
+    private async void PresentationPlayerOnSheetTimeElapsed(object? sender, EventArgs e)
+    {
+        Image = Path.Combine("/", "presentations", TalkId.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
+        await InvokeAsync(StateHasChanged);
+    }
+}
