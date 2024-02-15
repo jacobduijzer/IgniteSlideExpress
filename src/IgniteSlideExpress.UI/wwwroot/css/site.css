@@ -74,6 +74,18 @@ a, .btn-link {
     height: 100vh;
 }
 
+.show {
+    transition: opacity 1.5s ease;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.hide {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
 .presentationImage {
     width: 100%;
     max-width: 100%;

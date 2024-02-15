@@ -6,7 +6,7 @@ public record Talk(Guid Id, string Title, string Speaker, int NumberOfSlides)
 
     public bool LastSlideShown { get; private set; }
 
-    public string? NextImage()
+    public string NextImage()
     {
         if (!LastSlideShown)
         {
