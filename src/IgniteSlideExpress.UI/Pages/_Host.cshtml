@@ -34,11 +34,11 @@
             var timeoutId;
             
             function hideTable() {
-                document.getElementById("presentationTable").style.display = 'none';
+                document.getElementById("presentationControls").style.display = 'none';
             }
             
             function showTable() {
-                document.getElementById("presentationTable").style.display = 'inline';
+                document.getElementById("presentationControls").style.display = 'inline';
                 clearTimeout(timeoutId);
                 timeoutId = setTimeout(hideTable, 3000);
             }

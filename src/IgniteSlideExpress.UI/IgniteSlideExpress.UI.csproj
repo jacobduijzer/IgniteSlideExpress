@@ -55,8 +55,5 @@
       <_ContentIncludedByDefault Remove="wwwroot\presentations\bb4653a1-d788-4383-ba74-06721841fcf1\9.jpg" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="wwwroot\presentations\" />
-    </ItemGroup>
 
 </Project>
