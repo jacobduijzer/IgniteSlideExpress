@@ -108,11 +108,11 @@ a, .btn-link {
 }
 
 #presentationControls {
-    border-collapse: collapse;
-    margin: auto;
-    position: fixed;
-    bottom: 40px;
-    min-width: 30%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 80px;
+    margin-left: 50px;
 }
 
 .oi-button-base {
