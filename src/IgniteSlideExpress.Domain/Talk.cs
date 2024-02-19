@@ -2,19 +2,22 @@ namespace IgniteSlideExpress.Domain;
 
 public record Talk(Guid Id, string Title, string Speaker, int NumberOfSlides)
 {
-    private int _currentSlide;
+    public int CurrentSlideNumber { get; private set; } = 1;
+    public string CurrentSlide => $"{CurrentSlideNumber}.jpg";
 
-    public bool LastSlideShown { get; private set; }
 
-    public string NextImage()
+    public bool LastSlideShown => CurrentSlideNumber == NumberOfSlides;
+
+    public void PreviousSlide()
     {
-        if (!LastSlideShown)
-        {
-            _currentSlide++;
-            if (_currentSlide == NumberOfSlides)
-                LastSlideShown = true;
-        }
-            
-        return $"{_currentSlide}.jpg";
+        if (CurrentSlideNumber > 0)
+            CurrentSlideNumber--;
+    }
+
+    public void NextSlide()
+    {
+        if (LastSlideShown) return;
+ 
+        CurrentSlideNumber++;
     }
 }

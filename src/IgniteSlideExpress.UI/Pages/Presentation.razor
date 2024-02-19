@@ -10,24 +10,25 @@
     <table class="table-responsive-lg table-bordered" id="presentationControls">
         <tbody>
         <tr>
-            <td>
+            <td colspan="3">
                 <h1>@(_talk != null ? _talk.Title : string.Empty)</h1>
             </td>
         </tr>
         <tr>
-            <td>
+            <td colspan="3">
                 <h2>@(_talk != null ? _talk.Speaker : string.Empty)</h2>
             </td>
         </tr>
         <tr>
             <td class="text-center">
-
-                <span class="oi-button-base oi-button-large oi--media-skip-backward"></span>
+                <span class="oi-button-base oi-button-large oi--media-skip-backward" @onclick="PreviousSlide"></span>
                 <span class="oi-button-base oi-button-large oi--media-pause"></span>
                 <span class="oi-button-base oi-button-large oi--media-stop" @onclick="Stop"></span>
                 <span class="oi-button-base oi-button-large oi--media-play" @onclick="Start"></span>
-                <span class="oi-button-base oi-button-large oi--media-skip-forward"></span>
+                <span class="oi-button-base oi-button-large oi--media-skip-forward" @onclick="NextSlide"></span>
             </td>
+            <td>@(_talk != null ? $"{_talk.CurrentSlideNumber} of {_talk.NumberOfSlides}" : string.Empty)</td>
+            <td></td>
         </tr>
         </tbody>
     </table>
@@ -60,13 +61,13 @@
         }
     }
 
-    private void Start()
+    private async Task Start()
     {
-        PresentationPlayer.Add(_talk);
         PresentationPlayer.SheetTimeElapsed += PresentationPlayerOnSheetTimeElapsed;
-
+        PresentationPlayer.Add(_talk);
         _image = Path.Combine("/", "presentations", TalkId.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
         _showImage = true;
+        await InvokeAsync(StateHasChanged);
         PresentationPlayer.Start();
     }
 
@@ -78,9 +79,26 @@
         _showImage = false;
     }
 
-    private async void PresentationPlayerOnSheetTimeElapsed(object? sender, EventArgs e)
+    private async Task PreviousSlide()
     {
-        _image = Path.Combine("/", "presentations", TalkId.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
+        PresentationPlayer.Stop();
+        PresentationPlayer.PreviousSlide();
+        await UpdateSlide();
+    }
+
+    private async Task NextSlide()
+    {
+        PresentationPlayer.Stop();
+        PresentationPlayer.NextSlide();
+        await UpdateSlide();
+    }
+
+    private async void PresentationPlayerOnSheetTimeElapsed(object? sender, EventArgs e) =>
+        await UpdateSlide();
+
+    private async Task UpdateSlide()
+    {
+        _image = Path.Combine("/", "presentations", TalkId!.ToString(), PresentationPlayer.CurrentImage) + $"?DummyId={DateTime.Now.Ticks}";
         await InvokeAsync(StateHasChanged);
     }
 

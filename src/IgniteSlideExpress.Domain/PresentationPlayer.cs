@@ -22,7 +22,7 @@ public class PresentationPlayer
     public void Add(Talk talk)
     {
         Talk = talk;
-        CurrentImage = talk.NextImage();
+        CurrentImage = talk.CurrentSlide;
     }
 
     public void Start()
@@ -34,6 +34,24 @@ public class PresentationPlayer
         _timer.Start(TimeSpan.FromSeconds(IntervalTiming).TotalMilliseconds);
     }
 
+    public void PreviousSlide()
+    {
+        // TODO:
+        // Set slide to previous slide
+        // Adjust timing
+        Talk!.PreviousSlide();
+        CurrentImage = Talk!.CurrentSlide;
+    }
+
+    public void NextSlide()
+    {
+        // TODO:
+        // Set slide to next slide
+        // Ajust timing
+        Talk!.NextSlide();
+        CurrentImage = Talk!.CurrentSlide;
+    }
+    
     public void Stop()
     {
         _timer.Stop();
@@ -42,7 +60,8 @@ public class PresentationPlayer
 
     private void TimerOnSheetTimeElapsed(object? sender, EventArgs e)
     {
-        CurrentImage = Talk!.NextImage();
+        Talk!.NextSlide();
+        CurrentImage = Talk!.CurrentSlide;
         SheetTimeElapsed?.Invoke(this, e);
 
         if (Talk!.LastSlideShown)
