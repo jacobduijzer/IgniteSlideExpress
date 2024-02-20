@@ -1,15 +1,11 @@
-using IgniteSlideExpress.Application;
-using IgniteSlideExpress.Domain;
-using IgniteSlideExpress.Infrastructure;
+using IgniteSlideExpress.Core;
 using IgniteSlideExpress.UI.ViewModels;
-using ITimer = IgniteSlideExpress.Domain.ITimer;
-using Timer = IgniteSlideExpress.Infrastructure.Timer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<ITimer, Timer>();
+builder.Services.AddSingleton<IgniteSlideExpress.Core.ITimer, IgniteSlideExpress.Core.Timer>();
 builder.Services.AddSingleton<PresentationViewModel>();
 builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
 builder.Services.AddSingleton<IPdf2Slides, Pdf2Slides>();

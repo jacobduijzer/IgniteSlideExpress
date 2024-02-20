@@ -1,7 +1,7 @@
-using IgniteSlideExpress.Domain;
+using IgniteSlideExpress.Core;
 using IgniteSlideExpress.UI.ViewModels;
 using Moq;
-using ITimer = IgniteSlideExpress.Domain.ITimer;
+using ITimer = System.Threading.ITimer;
 
 namespace IgniteSlideExpress.UnitTests.UI.ViewModels;
 
@@ -82,7 +82,7 @@ public class PresentationViewModelTests
         var mockSessionRepository = new Mock<ISessionRepository>();
         mockSessionRepository.Setup(x => x.Get(_testTalk.Id)).ReturnsAsync(_testTalk);
 
-        var mockTimer = new Mock<ITimer>();
+        var mockTimer = new Mock<IgniteSlideExpress.Core.ITimer>();
         return new PresentationViewModel(mockSessionRepository.Object, mockTimer.Object);
     }
 }

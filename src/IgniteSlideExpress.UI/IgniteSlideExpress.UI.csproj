@@ -7,12 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\IgniteSlideExpress.Application\IgniteSlideExpress.Application.csproj" />
-      <ProjectReference Include="..\IgniteSlideExpress.Domain\IgniteSlideExpress.Domain.csproj" />
-      <ProjectReference Include="..\IgniteSlideExpress.Infrastructure\IgniteSlideExpress.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\1.jpg" />
       <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\10.jpg" />
       <_ContentIncludedByDefault Remove="wwwroot\presentations\b1e88cce-a82b-4075-b1b7-9e8edac65eec\11.jpg" />
@@ -56,5 +50,26 @@
     </ItemGroup>
 
 
+
+
+    <ItemGroup>
+      <Folder Include="Data\" />
+    </ItemGroup>
+
+
+
+
+    <ItemGroup>
+      <Reference Include="IgniteSlideExpress.Application">
+        <HintPath>bin\Debug\net8.0\IgniteSlideExpress.Application.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\IgniteSlideExpress.Core\IgniteSlideExpress.Core.csproj" />
+    </ItemGroup>
 
 </Project>

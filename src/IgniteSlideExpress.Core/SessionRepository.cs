@@ -1,7 +1,6 @@
 using System.Text.Json;
-using IgniteSlideExpress.Domain;
 
-namespace IgniteSlideExpress.Infrastructure;
+namespace IgniteSlideExpress.Core;
 
 public class SessionRepository : ISessionRepository
 {

@@ -1,4 +1,4 @@
-namespace IgniteSlideExpress.Domain;
+namespace IgniteSlideExpress.Core;
 
 public class TalkNotLoadedException : Exception
 {

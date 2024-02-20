@@ -1,4 +1,4 @@
-namespace IgniteSlideExpress.Application;
+namespace IgniteSlideExpress.Core;
 
 public interface IPdf2Slides
 {

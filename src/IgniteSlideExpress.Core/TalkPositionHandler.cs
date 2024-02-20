@@ -1,6 +1,4 @@
-using IgniteSlideExpress.Domain;
-
-namespace IgniteSlideExpress.Application;
+namespace IgniteSlideExpress.Core;
 
 public class TalkPositionHandler
 {

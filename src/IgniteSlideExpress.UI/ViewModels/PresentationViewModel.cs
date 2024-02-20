@@ -1,4 +1,5 @@
-using IgniteSlideExpress.Domain;
+using IgniteSlideExpress.Core;
+using ITimer = IgniteSlideExpress.Core.ITimer;
 
 namespace IgniteSlideExpress.UI.ViewModels;
 
@@ -6,7 +7,7 @@ public class PresentationViewModel : BaseViewModel, IDisposable
 {
     private const int MaxDurationInMinutes = 5;
     private readonly ISessionRepository _sessionRepository;
-    private readonly Domain.ITimer _timer;
+    private readonly ITimer _timer;
 
     private Talk _talk;
     public Talk Talk
@@ -46,7 +47,7 @@ public class PresentationViewModel : BaseViewModel, IDisposable
         private set => SetValue(ref _nextButtonDisabled, value);
     }
     
-    public PresentationViewModel(ISessionRepository sessionRepository, Domain.ITimer timer)
+    public PresentationViewModel(ISessionRepository sessionRepository, ITimer timer)
     {
         _sessionRepository = sessionRepository;
         _timer = timer;

@@ -1,4 +1,4 @@
-namespace IgniteSlideExpress.Domain;
+namespace IgniteSlideExpress.Core;
 
 public record Talk(Guid Id, string Title, string Speaker, int NumberOfSlides)
 {

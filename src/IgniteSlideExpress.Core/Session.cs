@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace IgniteSlideExpress.Domain;
+namespace IgniteSlideExpress.Core;
 
 public class Session
 {

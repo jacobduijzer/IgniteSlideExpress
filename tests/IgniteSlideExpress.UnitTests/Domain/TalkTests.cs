@@ -1,4 +1,4 @@
-using IgniteSlideExpress.Domain;
+using IgniteSlideExpress.Core;
 
 namespace IgniteSlideExpress.UnitTests.Domain;
 

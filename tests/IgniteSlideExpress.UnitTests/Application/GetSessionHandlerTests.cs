@@ -1,5 +1,4 @@
-using IgniteSlideExpress.Application;
-using IgniteSlideExpress.Infrastructure;
+using IgniteSlideExpress.Core;
 
 namespace IgniteSlideExpress.UnitTests.Application;
 

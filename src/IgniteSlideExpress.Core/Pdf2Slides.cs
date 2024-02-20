@@ -1,7 +1,6 @@
-using IgniteSlideExpress.Application;
 using SkiaSharp;
 
-namespace IgniteSlideExpress.Infrastructure;
+namespace IgniteSlideExpress.Core;
 
 public class Pdf2Slides : IPdf2Slides
 {

@@ -1,8 +1,8 @@
 using System.Timers;
 
-namespace IgniteSlideExpress.Infrastructure
+namespace IgniteSlideExpress.Core
 {
-    public class Timer : Domain.ITimer
+    public class Timer : ITimer
     {
         public event EventHandler<EventArgs>? SheetTimeElapsed;
     
