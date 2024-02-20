@@ -9,27 +9,27 @@
 <PageTitle>Ignite Slide Express</PageTitle>
 
 <div class="centered-grid">
-    <table class="table-responsive-lg table-bordered table-dark" id="presentationControls">
+   
+    <table class="table-responsive-lg table table-dark" id="presentationControls">
         <tbody>
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 <h1>@(PresentationViewModel.Talk?.Title)</h1>
             </td>
         </tr>
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 <h2>@(PresentationViewModel.Talk?.Speaker)</h2>
             </td>
         </tr>
         <tr>
-            <td class="text-center">
+            <td class="align-middle">
                 <button class="oi-button-base oi-button-large oi--media-skip-backward" @onclick="PreviousSlide" disabled="@(PresentationViewModel.PreviousButtonDisabled)"></button>
                 <button class="oi-button-base oi-button-large oi--media-stop" @onclick="Stop" disabled="@(PresentationViewModel.StopButtonDisabled)"></button>
                 <button class="oi-button-base oi-button-large oi--media-play" @onclick="Start" disabled="@(PresentationViewModel.PlayButtonDisabled)"></button>
                 <button class="oi-button-base oi-button-large oi--media-skip-forward" @onclick="NextSlide" disabled="@(PresentationViewModel.NextButtonDisabled)"></button>
             </td>
-            <td>@(PresentationViewModel.Talk?.CurrentSlideNumber) of @(PresentationViewModel.Talk?.NumberOfSlides)</td>
-            <td></td>
+            <td class="text-end align-middle"><h1>@(PresentationViewModel.Talk?.CurrentSlideNumber) of @(PresentationViewModel.Talk?.NumberOfSlides)</h1></td>
         </tr>
         </tbody>
     </table>
@@ -71,5 +71,4 @@
 
     public void Dispose() =>
         PresentationViewModel.PropertyChanged -= PresentationViewModelOnPropertyChanged;
-
 }

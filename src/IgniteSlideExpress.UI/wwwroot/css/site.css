@@ -113,6 +113,7 @@ a, .btn-link {
     left: 0;
     margin-bottom: 80px;
     margin-left: 50px;
+    max-width: 40%;
 }
 
 .oi-button-base {

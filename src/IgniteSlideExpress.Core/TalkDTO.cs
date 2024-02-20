@@ -1,6 +1,6 @@
-namespace IgniteSlideExpress.UI;
+namespace IgniteSlideExpress.Core;
 
-public class TalkDTO
+public class TalkDto
 {
     public string Title { get; set; } = string.Empty;
     public string Speaker { get; set; } = string.Empty;
