@@ -12,9 +12,10 @@ public class SessionRepository : ISessionRepository
         return await Create();
     }
 
-    public Task AddFiles<T>(Talk talk, List<T> files) 
+    public async Task<Talk> Get(Guid talkId)
     {
-        throw new NotImplementedException();
+        var sessions = await Load();
+        return sessions.Talks.First(talk => talk != null && talk.Id.Equals(talkId))!;
     }
 
     public async Task Add(Talk talk)

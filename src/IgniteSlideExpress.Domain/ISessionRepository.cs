@@ -4,8 +4,8 @@ public interface ISessionRepository
 {
     Task<Session> Load();
 
-    Task AddFiles<T>(Talk talk, List<T> files);
-   
+    Task<Talk> Get(Guid talkId);
+    
     Task Add(Talk talk);
 
     Task Remove(Guid talkId);

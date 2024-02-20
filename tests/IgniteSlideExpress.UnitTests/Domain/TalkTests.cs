@@ -60,7 +60,7 @@ public class TalkTests
             talk.NextSlide();
         
         // ASSERT
-        Assert.True(talk.LastSlideShown);
+        Assert.True(talk.LastSlideVisible);
     }
 
     [Theory]
