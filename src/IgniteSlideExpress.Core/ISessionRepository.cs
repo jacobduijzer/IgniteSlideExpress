@@ -8,7 +8,7 @@ public interface ISessionRepository
     
     Task Add(Talk talk);
 
-    Task Remove(Guid talkId);
+    Task Delete(Guid talkId);
 
     Task MoveUp(Guid talkId);
 

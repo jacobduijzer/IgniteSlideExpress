@@ -9,7 +9,7 @@
 <PageTitle>Ignite Slide Express</PageTitle>
 
 <div class="centered-grid">
-    <table class="table-responsive-lg table-bordered" id="presentationControls">
+    <table class="table-responsive-lg table-bordered table-dark" id="presentationControls">
         <tbody>
         <tr>
             <td colspan="3">
@@ -44,41 +44,32 @@
 
     protected override async Task OnInitializedAsync()
     {
-        PresentationViewModel.PropertyChanged += async (sender, e) =>
-        {
-            await InvokeAsync(StateHasChanged);
-        };
+        PresentationViewModel.PropertyChanged += PresentationViewModelOnPropertyChanged;
 
         if (TalkId.HasValue)
         {
             await PresentationViewModel.Load(TalkId.Value);
         }
-        
+
         await base.OnInitializedAsync();
     }
 
-    private void Start()
-    {
+    private void Start() =>
         PresentationViewModel.Play();
-    }
 
-    private void Stop()
-    {
+    private void Stop() =>
         PresentationViewModel.Stop();
-    }
 
-    private void PreviousSlide() => PresentationViewModel.PreviousSlide();
+    private void PreviousSlide() =>
+        PresentationViewModel.PreviousSlide();
 
-    private void NextSlide() => PresentationViewModel.NextSlide();
+    private void NextSlide() =>
+        PresentationViewModel.NextSlide();
 
-    private async void OnPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
-    {
+    private async void PresentationViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) =>
         await InvokeAsync(StateHasChanged);
-    }
 
-    public void Dispose()
-    {
-        PresentationViewModel.PropertyChanged -= OnPropertyChangedHandler;
-    }
+    public void Dispose() =>
+        PresentationViewModel.PropertyChanged -= PresentationViewModelOnPropertyChanged;
 
 }

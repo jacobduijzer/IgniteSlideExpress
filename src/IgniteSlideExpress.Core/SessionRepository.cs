@@ -24,7 +24,7 @@ public class SessionRepository : ISessionRepository
         await Save(session);
     }
 
-    public async Task Remove(Guid talkId)
+    public async Task Delete(Guid talkId)
     {
         var session = await Create();
         session!.Remove(talkId);

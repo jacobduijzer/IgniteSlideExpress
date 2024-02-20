@@ -1,60 +1,63 @@
 ﻿@page "/"
+@using IgniteSlideExpress.UI.ViewModels
+@using System.ComponentModel
 @using IgniteSlideExpress.Core
-@inject CreateTalkHandler CreateTalkHandler 
-@inject GetSessionHandler GetSessionHandler
-@inject TalkPositionHandler TalkPositionHandler
-@inject RemoveTalkHandler RemoveTalkHandler
+
+@inject SessionViewModel SessionViewModel
+
+@implements IDisposable
 
 <PageTitle>Ignite Slide Express</PageTitle>
 
 <div class="container">
 
-    <EditForm Model=@_talk OnSubmit="FormSubmitted">
-        <table class="table">
-            <thead>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Speaker</th>
+            <th>Slides</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var talk in SessionViewModel.Session.Talks.Select((value, i) => new { i, value }))
+        {
             <tr>
-                <th>Title</th>
-                <th>Speaker</th>
-                <th>Slides</th>
-                <th></th>
+                <td>
+                    <NavLink class="nav-link" href="@($"presentation/{talk.value.Id}")" target="_blank">
+                        @talk.value.Title
+                    </NavLink>
+                </td>
+                <td>@talk.value.Speaker</td>
+                <td>@talk.value.NumberOfSlides</td>
+                <td>
+                    <div class="row">
+                        <div class="col-sm">
+                            @if (talk.i > 0)
+                            {
+                                <button class="oi-button-base oi-button-small oi--arrow-top" aria-hidden="true" @onclick="() => MoveUp(talk.value.Id)"></button>
+                            }
+                        </div>
+                        <div class="col-sm">
+                            @if (talk.i < SessionViewModel.Session.Talks.Count - 1)
+                            {
+                                <button class="oi-button-base oi-button-small oi--arrow-bottom" aria-hidden="true" @onclick="() => MoveDown(talk.value.Id)"></button>
+                            }
+                        </div>
+                        <div class="col-sm">
+                            <button class="oi-button-base oi-button-small oi--trash" aria-hidden="true" @onclick="() => Delete(talk.value.Id)"></button>
+                        </div>
+                    </div>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            @if (_session != null)
-            {
-                foreach (var talk in _session.Talks.Select((value, i) => new { i, value }))
-                {
-                    <tr>
-                        <td>
-                            <NavLink class="nav-link" href="@($"presentation/{talk.value.Id}")" target="_blank">
-                                @talk.value.Title
-                            </NavLink>
-                        </td>
-                        <td>@talk.value.Speaker</td>
-                        <td>@talk.value.NumberOfSlides</td>
-                        <td>
-                            <div class="row">
-                                <div class="col-sm">
-                                    @if (talk.i > 0)
-                                    {
-                                        <span class="oi-button-base oi-button-small oi--arrow-top" aria-hidden="true" @onclick="() => MoveUp(talk.value.Id)"></span>
-                                    }
-                                </div>
-                                <div class="col-sm">
-                                    @if (talk.i < _session.Talks.Count - 1)
-                                    {
-                                        <span class="oi-button-base oi-button-small oi--arrow-bottom" aria-hidden="true" @onclick="() => MoveDown(talk.value.Id)"></span>
-                                    }
-                                </div>
-                                <div class="col-sm">
-                                    <span class="oi-button-base oi-button-small oi--trash" aria-hidden="true" @onclick="() => Delete(talk.value.Id)"></span>
-
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            }
+        }
+        </tbody>
+    </table>
+    <EditForm Model=@_talk OnSubmit="FormSubmitted">
+    <table>
+        <tbody>
             <tr>
                 <td>
                     <InputText @bind-Value="_talk.Title"/>
@@ -79,64 +82,40 @@
     private readonly TalkDTO _talk = new();
     private readonly List<IBrowserFile> _loadedFiles = new();
     private bool _isDisabled = true;
-    private Session? _session;
-
+    
     protected override async Task OnInitializedAsync()
     {
-        _session = await LoadSessions();
+        SessionViewModel.PropertyChanged += SessionViewModelOnPropertyChanged;
+        await SessionViewModel.LoadSession();
+        
+        await base.OnInitializedAsync();
     }
 
-    private async Task<Session> LoadSessions()
-    {
-        return await GetSessionHandler.Handle(new GetSessionHandler.GetSessionQuery());
-    }
+    private async void SessionViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) =>
+        await InvokeAsync(StateHasChanged);
 
     private void LoadFiles(InputFileChangeEventArgs e)
     {
-        // isLoading = true;
-        _loadedFiles.Clear();
-
-        foreach (var file in e.GetMultipleFiles())
-        {
-            try
-            {
-                _loadedFiles.Add(file);
-            }
-            catch (Exception ex)
-            {
-    // Logger.LogError("File: {FileName} Error: {Error}", 
-    // file.Name, ex.Message);
-            }
-        }
-
-    // isLoading = false;
+        // TODO loader
+        SessionViewModel.AddFiles(e.GetMultipleFiles().ToList());
         _isDisabled = false;
     }
 
     private async Task FormSubmitted()
     {
-        // TODO: change this to something better
-        var pdfFile = await new UploadFileProcessor(_loadedFiles).Process();
-        await CreateTalkHandler.Handle(new CreateTalkHandler.CreateTalkCommand(_talk.Title, _talk.Speaker, pdfFile));
-        _session = await LoadSessions();
+        // TODO loader
+        await SessionViewModel.AddTalk(_talk.Title, _talk.Speaker);
     }
+    
+    private async Task MoveUp(Guid talkId) =>
+        await SessionViewModel.ChangeTalkPosition(Direction.Up, talkId);
+    
+    private async Task MoveDown(Guid talkId) =>
+        await SessionViewModel.ChangeTalkPosition(Direction.Down, talkId);
 
-    private async Task MoveUp(Guid talkId)
-    {
-        await TalkPositionHandler.Handle(new TalkPositionHandler.TalkPositionCommand(talkId, TalkPositionHandler.Direction.Up));
-        _session = await LoadSessions();
-    }
-
-    private async Task MoveDown(Guid talkId)
-    {
-        await TalkPositionHandler.Handle(new TalkPositionHandler.TalkPositionCommand(talkId, TalkPositionHandler.Direction.Down));
-        _session = await LoadSessions();
-    }
-
-    private async Task Delete(Guid talkId)
-    {
-        await RemoveTalkHandler.Handle(new RemoveTalkHandler.RemoveTalkCommand(talkId));
-        _session = await LoadSessions();
-    }
-
+    private async Task Delete(Guid talkId) =>
+        await SessionViewModel.DeleteTalk(talkId);
+   
+    public void Dispose() =>
+        SessionViewModel.PropertyChanged -= SessionViewModelOnPropertyChanged;
 }
