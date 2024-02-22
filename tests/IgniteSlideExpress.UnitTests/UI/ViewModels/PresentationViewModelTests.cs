@@ -1,5 +1,6 @@
 using IgniteSlideExpress.Core;
 using IgniteSlideExpress.UI.ViewModels;
+using Microsoft.Extensions.Configuration;
 using Moq;
 
 namespace IgniteSlideExpress.UnitTests.UI.ViewModels;
@@ -78,10 +79,16 @@ public class PresentationViewModelTests
     
     private PresentationViewModel CreateDefaultViewModel()
     {
+        var mockConfiguration = new Mock<IConfiguration>();
+        mockConfiguration.Setup(x => x["DurationInMinutes"]).Returns("5");
+        
         var mockSessionRepository = new Mock<ISessionRepository>();
         mockSessionRepository.Setup(x => x.Get(_testTalk.Id)).ReturnsAsync(_testTalk);
 
         var mockTimer = new Mock<Core.ITimer>();
-        return new PresentationViewModel(mockSessionRepository.Object, mockTimer.Object);
+        return new PresentationViewModel(
+            mockConfiguration.Object, 
+            mockSessionRepository.Object, 
+            mockTimer.Object);
     }
 }

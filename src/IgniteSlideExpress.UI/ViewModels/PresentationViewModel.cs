@@ -5,7 +5,8 @@ namespace IgniteSlideExpress.UI.ViewModels;
 
 public class PresentationViewModel : BaseViewModel, IDisposable
 {
-    private const int MaxDurationInMinutes = 5;
+    private readonly int _maxDurationInMinutes = 5;
+    private readonly IConfiguration _configuration;
     private readonly ISessionRepository _sessionRepository;
     private readonly ITimer _timer;
 
@@ -47,11 +48,15 @@ public class PresentationViewModel : BaseViewModel, IDisposable
         private set => SetValue(ref _nextButtonDisabled, value);
     }
     
-    public PresentationViewModel(ISessionRepository sessionRepository, ITimer timer)
+    public PresentationViewModel(IConfiguration configuration, ISessionRepository sessionRepository, ITimer timer)
     {
+        _configuration = configuration;
         _sessionRepository = sessionRepository;
         _timer = timer;
         _timer.SheetTimeElapsed += TimerOnSheetTimeElapsed;
+
+        if (int.TryParse(_configuration["DurationInMinutes"], out var duration))
+            _maxDurationInMinutes = duration;
     }
 
     public async Task Load(Guid talkId)
@@ -67,7 +72,7 @@ public class PresentationViewModel : BaseViewModel, IDisposable
         if(Talk == null)
             throw new TalkNotLoadedException("Please add a talk before starting the presentation");
         
-        var intervalTiming = TimeSpan.FromSeconds(TimeSpan.FromMinutes(MaxDurationInMinutes).TotalSeconds / Talk!.NumberOfSlides).TotalMilliseconds;
+        var intervalTiming = TimeSpan.FromSeconds(TimeSpan.FromMinutes(_maxDurationInMinutes).TotalSeconds / Talk!.NumberOfSlides).TotalMilliseconds;
         _timer.Start(intervalTiming);
         PlayButtonDisabled = true;
         UpdateButtonsState();
