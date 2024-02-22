@@ -14,6 +14,11 @@ Run the project as a docker container:
 docker run -it --rm -p 3000:8080 jacobduijzer/igniteslideexpress:latest
 ```
 
+If you want to use another duration for the presentation, you can use an environmental variable when running the docker image. For example, the next command will run with a duration of 1 minute:
+```bash
+docker run -it --rm -p 3000:8080 jacobduijzer/igniteslideexpress:latest -e "DurationInMinutes=1"
+```
+
 Open a browser and go to [http://localhost:3000](http://localhost:3000) to open the application.
 
 ## Sources
