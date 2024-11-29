@@ -47,10 +47,11 @@ public class SessionRepository : ISessionRepository
 
     private async Task<Session> Create()
     {
-        if (!File.Exists(DataFile))
+        var path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
+        if (!File.Exists(Path.Combine(path, DataFile)))
             await Save(new Session());
         
-        using StreamReader reader = new(DataFile);
+        using StreamReader reader = new(Path.Combine(path, DataFile));
         var json = await reader.ReadToEndAsync();
         var session = JsonSerializer.Deserialize<Session>(json);
         return session!;
@@ -58,7 +59,8 @@ public class SessionRepository : ISessionRepository
 
     private static async Task Save(Session session)
     {
-        await using var writer = new StreamWriter(DataFile);
+        var path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
+        await using var writer = new StreamWriter(Path.Combine(path, DataFile));
         await writer.WriteAsync(JsonSerializer.Serialize(session));
     }
 }
