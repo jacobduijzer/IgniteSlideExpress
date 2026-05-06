@@ -1,4 +1,5 @@
 using SkiaSharp;
+using System.Runtime.Versioning;
 
 namespace IgniteSlideExpress.Core;
 
@@ -14,6 +15,9 @@ public class Pdf2Slides : IPdf2Slides
             throw new FileNotFoundException($"The file {pdfFile} can not be found in directory {talkId}.");
 
         Directory.CreateDirectory(slidesPath);
+
+        if (!IsSupportedPlatform())
+            throw new PlatformNotSupportedException("PDF conversion is not supported on this operating system.");
         
         var numberOfSlides = 0;
         await using var inputStream = new FileStream(pdfFilePath, FileMode.Open, FileAccess.Read);
@@ -27,4 +31,18 @@ public class Pdf2Slides : IPdf2Slides
 
         return numberOfSlides;
     }
+
+    [SupportedOSPlatformGuard("windows")]
+    [SupportedOSPlatformGuard("linux")]
+    [SupportedOSPlatformGuard("macos")]
+    [SupportedOSPlatformGuard("android31.0")]
+    [SupportedOSPlatformGuard("ios13.6")]
+    [SupportedOSPlatformGuard("maccatalyst13.5")]
+    private static bool IsSupportedPlatform() =>
+        OperatingSystem.IsWindows() ||
+        OperatingSystem.IsLinux() ||
+        OperatingSystem.IsMacOS() ||
+        OperatingSystem.IsAndroidVersionAtLeast(31) ||
+        OperatingSystem.IsIOSVersionAtLeast(13, 6) ||
+        OperatingSystem.IsMacCatalystVersionAtLeast(13, 5);
 }

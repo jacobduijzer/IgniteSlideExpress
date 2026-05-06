@@ -17,7 +17,7 @@ public class SessionViewModel(
         private set { SetValue(ref _session, value); }
     }
 
-    private List<IBrowserFile> _browserFiles;
+    private List<IBrowserFile> _browserFiles = new();
 
     public async Task LoadSession()
     {

@@ -14,7 +14,7 @@ public class SessionTests
         session.Add(new Talk(Guid.NewGuid(),"Talk 1", "Speaker 1", 0));
 
         // ASSERT
-        Assert.Equal(1, session.Talks.Count);
+        Assert.Single(session.Talks);
     }
 
     [Fact]
@@ -59,6 +59,6 @@ public class SessionTests
         session.MoveUp(talk2.Id);
         
         // ASSERT
-        Assert.True(session.Talks.FirstOrDefault()!.Title.Equals(talk2.Title));
+        Assert.Equal(talk2.Title, session.Talks.FirstOrDefault()!.Title);
     } 
 }

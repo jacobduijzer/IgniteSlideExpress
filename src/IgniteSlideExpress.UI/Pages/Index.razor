@@ -21,7 +21,9 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var talk in SessionViewModel.Session.Talks.Select((value, i) => new { i, value }))
+        @foreach (var talk in SessionViewModel.Session.Talks
+            .Where(value => value is not null)
+            .Select((value, i) => new { i, value = value! }))
         {
             <tr>
                 <td>
