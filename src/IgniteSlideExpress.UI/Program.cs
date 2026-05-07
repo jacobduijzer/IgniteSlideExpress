@@ -12,8 +12,11 @@ builder.Services.AddSingleton<PresentationViewModel>();
 builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
 builder.Services.AddSingleton<IPdf2Slides, Pdf2Slides>();
 builder.Services.AddSingleton<UploadFileProcessor>();
+builder.Services.AddSingleton<StartupPresentationImporter>();
 
 var app = builder.Build();
+
+await app.Services.GetRequiredService<StartupPresentationImporter>().Import();
 
 if (!app.Environment.IsDevelopment())
 {

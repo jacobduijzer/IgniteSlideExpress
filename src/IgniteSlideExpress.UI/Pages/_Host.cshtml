@@ -31,21 +31,20 @@
 
         <script src="_framework/blazor.server.js"></script>
         <script>
-            var timeoutId;
-            
-            function hideTable() {
-                document.getElementById("presentationControls").style.display = 'none';
+            let presentationControlsTimeoutId;
+
+            function hidePresentationControls() {
+                document.getElementById("presentationControls")?.classList.add("is-hidden");
             }
-            
-            function showTable() {
-                document.getElementById("presentationControls").style.display = '';
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(hideTable, 3000);
+
+            function showPresentationControls() {
+                document.getElementById("presentationControls")?.classList.remove("is-hidden");
+                clearTimeout(presentationControlsTimeoutId);
+                presentationControlsTimeoutId = setTimeout(hidePresentationControls, 3000);
             }
-            
-            timeoutId = setTimeout(hideTable, 3000);
-            
-            document.addEventListener("mousemove", showTable);
+
+            document.addEventListener("mousemove", showPresentationControls);
+            showPresentationControls();
         </script>
     </body>
 </html>

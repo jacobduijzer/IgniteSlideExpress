@@ -45,6 +45,9 @@ public class SessionViewModel(
         await LoadSession();
     }
 
-    public async Task DeleteTalk(Guid talkId) =>
+    public async Task DeleteTalk(Guid talkId)
+    {
         await sessionRepository.Delete(talkId);
+        await LoadSession();
+    }
 }

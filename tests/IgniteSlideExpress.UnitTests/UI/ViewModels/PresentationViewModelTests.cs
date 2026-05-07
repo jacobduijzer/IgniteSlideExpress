@@ -76,8 +76,121 @@ public class PresentationViewModelTests
         // ASSERT
         Assert.False(viewModel.PlayButtonDisabled);
     }
+
+    [Fact]
+    public async Task CalculatesSlideDurationFromPresentationDurationAndSlideCount()
+    {
+        // ARRANGE
+        PresentationViewModel viewModel = CreateDefaultViewModel();
+
+        // ACT
+        await viewModel.Load(_testTalk.Id);
+
+        // ASSERT
+        Assert.Equal(TimeSpan.FromSeconds(150), viewModel.SlideDuration);
+    }
+
+    [Fact]
+    public void CalculatesPresentationDurationFromConfiguration()
+    {
+        // ARRANGE & ACT
+        PresentationViewModel viewModel = CreateDefaultViewModel();
+
+        // ASSERT
+        Assert.Equal(TimeSpan.FromMinutes(5), viewModel.PresentationDuration);
+    }
+
+    [Fact]
+    public async Task PlayStartsTimerWithSlideDuration()
+    {
+        // ARRANGE
+        var mockTimer = new Mock<Core.ITimer>();
+        PresentationViewModel viewModel = CreateDefaultViewModel(mockTimer);
+        await viewModel.Load(_testTalk.Id);
+
+        // ACT
+        viewModel.Play();
+
+        // ASSERT
+        mockTimer.Verify(x => x.Start(150000), Times.Once);
+    }
+
+    [Fact]
+    public async Task AutoAdvanceKeepsPlayingWhenLastSlideBecomesVisible()
+    {
+        // ARRANGE
+        var mockTimer = new Mock<Core.ITimer>();
+        PresentationViewModel viewModel = CreateDefaultViewModel(mockTimer);
+        await viewModel.Load(_testTalk.Id);
+        viewModel.Play();
+
+        // ACT
+        mockTimer.Raise(x => x.SheetTimeElapsed += null, EventArgs.Empty);
+
+        // ASSERT
+        Assert.Equal(2, viewModel.Talk!.CurrentSlideNumber);
+        Assert.True(viewModel.PlayButtonDisabled);
+        mockTimer.Verify(x => x.Stop(), Times.Never);
+    }
+
+    [Fact]
+    public async Task AutoAdvanceStopsAfterLastSlideDurationElapsed()
+    {
+        // ARRANGE
+        var mockTimer = new Mock<Core.ITimer>();
+        PresentationViewModel viewModel = CreateDefaultViewModel(mockTimer);
+        await viewModel.Load(_testTalk.Id);
+        viewModel.Play();
+        mockTimer.Raise(x => x.SheetTimeElapsed += null, EventArgs.Empty);
+
+        // ACT
+        mockTimer.Raise(x => x.SheetTimeElapsed += null, EventArgs.Empty);
+
+        // ASSERT
+        Assert.Equal(2, viewModel.Talk!.CurrentSlideNumber);
+        Assert.False(viewModel.PlayButtonDisabled);
+        mockTimer.Verify(x => x.Stop(), Times.Once);
+    }
+
+    [Fact]
+    public async Task NextSlideKeepsPlayingAndRestartsSlideTimer()
+    {
+        // ARRANGE
+        var mockTimer = new Mock<Core.ITimer>();
+        PresentationViewModel viewModel = CreateDefaultViewModel(mockTimer);
+        await viewModel.Load(_testTalk.Id);
+        viewModel.Play();
+
+        // ACT
+        viewModel.NextSlide();
+
+        // ASSERT
+        Assert.Equal(2, viewModel.Talk!.CurrentSlideNumber);
+        Assert.True(viewModel.PlayButtonDisabled);
+        mockTimer.Verify(x => x.Stop(), Times.Once);
+        mockTimer.Verify(x => x.Start(150000), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task PreviousSlideKeepsPlayingAndRestartsSlideTimer()
+    {
+        // ARRANGE
+        var mockTimer = new Mock<Core.ITimer>();
+        PresentationViewModel viewModel = CreateDefaultViewModel(mockTimer);
+        await viewModel.Load(_testTalk.Id);
+        viewModel.NextSlide();
+        viewModel.Play();
+
+        // ACT
+        viewModel.PreviousSlide();
+
+        // ASSERT
+        Assert.Equal(1, viewModel.Talk!.CurrentSlideNumber);
+        Assert.True(viewModel.PlayButtonDisabled);
+        mockTimer.Verify(x => x.Start(150000), Times.Exactly(2));
+    }
     
-    private PresentationViewModel CreateDefaultViewModel()
+    private PresentationViewModel CreateDefaultViewModel(Mock<Core.ITimer>? mockTimer = null)
     {
         var mockConfiguration = new Mock<IConfiguration>();
         mockConfiguration.Setup(x => x["DurationInMinutes"]).Returns("5");
@@ -85,7 +198,7 @@ public class PresentationViewModelTests
         var mockSessionRepository = new Mock<ISessionRepository>();
         mockSessionRepository.Setup(x => x.Get(_testTalk.Id)).ReturnsAsync(_testTalk);
 
-        var mockTimer = new Mock<Core.ITimer>();
+        mockTimer ??= new Mock<Core.ITimer>();
         return new PresentationViewModel(
             mockConfiguration.Object, 
             mockSessionRepository.Object, 

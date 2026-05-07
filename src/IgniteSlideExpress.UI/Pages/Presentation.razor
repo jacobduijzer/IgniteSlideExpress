@@ -1,4 +1,4 @@
-﻿@page "/presentation/{TalkId:guid}"
+@page "/presentation/{TalkId:guid}"
 @using IgniteSlideExpress.UI.ViewModels
 @using System.ComponentModel
 @inject PresentationViewModel PresentationViewModel
@@ -8,39 +8,46 @@
 
 <PageTitle>Ignite Slide Express</PageTitle>
 
-<div class="centered-grid">
-   
-    <table class="table-responsive-lg table table-dark" id="presentationControls">
-        <tbody>
-        <tr>
-            <td colspan="2">
-                <h1>@(PresentationViewModel.Talk?.Title)</h1>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <h2>@(PresentationViewModel.Talk?.Speaker)</h2>
-            </td>
-        </tr>
-        <tr>
-            <td class="align-middle">
-                <button class="oi-button-base oi-button-large oi--media-skip-backward" @onclick="PreviousSlide" disabled="@(PresentationViewModel.PreviousButtonDisabled)"></button>
-                <button class="oi-button-base oi-button-large oi--media-stop" @onclick="Stop" disabled="@(PresentationViewModel.StopButtonDisabled)"></button>
-                <button class="oi-button-base oi-button-large oi--media-play" @onclick="Start" disabled="@(PresentationViewModel.PlayButtonDisabled)"></button>
-                <button class="oi-button-base oi-button-large oi--media-skip-forward" @onclick="NextSlide" disabled="@(PresentationViewModel.NextButtonDisabled)"></button>
-            </td>
-            <td class="text-end align-middle"><h1>@(PresentationViewModel.Talk?.CurrentSlideNumber) of @(PresentationViewModel.Talk?.NumberOfSlides)</h1></td>
-        </tr>
-        </tbody>
-    </table>
+<div class="presentation-overlay presentation-controls-overlay" id="presentationControls">
+    <div class="presentation-controls__meta">
+        <div class="presentation-controls__title">@(PresentationViewModel.Talk?.Title)</div>
+        <div class="presentation-controls__speaker">@(PresentationViewModel.Talk?.Speaker)</div>
+    </div>
+    <div class="presentation-controls__actions">
+        <button class="oi-button-base presentation-control-button oi--media-skip-backward" @onclick="PreviousSlide" disabled="@(PresentationViewModel.PreviousButtonDisabled)" aria-label="Previous slide"></button>
+        <button class="oi-button-base presentation-control-button oi--media-stop" @onclick="Stop" disabled="@(PresentationViewModel.StopButtonDisabled)" aria-label="Stop presentation"></button>
+        <button class="oi-button-base presentation-control-button oi--media-play" @onclick="Start" disabled="@(PresentationViewModel.PlayButtonDisabled)" aria-label="Start presentation"></button>
+        <button class="oi-button-base presentation-control-button oi--media-skip-forward" @onclick="NextSlide" disabled="@(PresentationViewModel.NextButtonDisabled)" aria-label="Next slide"></button>
+    </div>
+    <div class="presentation-controls__slide">
+        @(PresentationViewModel.Talk?.CurrentSlideNumber) / @(PresentationViewModel.Talk?.NumberOfSlides)
+    </div>
 </div>
 
 <img class="presentationImage" src="@(PresentationViewModel.CurrentSlide)" alt="Presentation Images"/>
+
+<div class="presentation-overlay">
+    <div>Slide time: @FormatDuration(SlideRemaining)</div>
+    <div>Total time: @FormatDuration(TotalRemaining)</div>
+    <div>Slide @(PresentationViewModel.Talk?.CurrentSlideNumber ?? 0) / @(PresentationViewModel.Talk?.NumberOfSlides ?? 0)</div>
+</div>
 
 @code {
 
     [Parameter]
     public Guid? TalkId { get; set; }
+
+    private readonly CancellationTokenSource _overlayRefreshCts = new();
+    private Task? _overlayRefreshTask;
+    private bool _isPlaying;
+    private DateTimeOffset _presentationStartedAt;
+    private DateTimeOffset _slideStartedAt;
+    private TimeSpan _totalElapsed = TimeSpan.Zero;
+    private TimeSpan _slideElapsed = TimeSpan.Zero;
+    private int _lastSlideNumber;
+
+    private TimeSpan SlideRemaining => PresentationViewModel.SlideDuration - _slideElapsed;
+    private TimeSpan TotalRemaining => PresentationViewModel.PresentationDuration - _totalElapsed;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,24 +58,108 @@
             await PresentationViewModel.Load(TalkId.Value);
         }
 
+        SyncOverlayState();
+        _overlayRefreshTask = RunOverlayRefreshLoop(_overlayRefreshCts.Token);
+
         await base.OnInitializedAsync();
     }
 
-    private void Start() =>
+    private void Start()
+    {
         PresentationViewModel.Play();
+        SyncOverlayState();
+    }
 
-    private void Stop() =>
+    private void Stop()
+    {
         PresentationViewModel.Stop();
+        SyncOverlayState();
+    }
 
-    private void PreviousSlide() =>
+    private void PreviousSlide()
+    {
         PresentationViewModel.PreviousSlide();
+        SyncOverlayState();
+    }
 
-    private void NextSlide() =>
+    private void NextSlide()
+    {
         PresentationViewModel.NextSlide();
+        SyncOverlayState();
+    }
 
-    private async void PresentationViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) =>
-        await InvokeAsync(StateHasChanged);
+    private async void PresentationViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(() =>
+        {
+            SyncOverlayState();
+            StateHasChanged();
+        });
+    }
 
-    public void Dispose() =>
+    private async Task RunOverlayRefreshLoop(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(cancellationToken))
+            {
+                if (!_isPlaying)
+                    continue;
+
+                await InvokeAsync(() =>
+                {
+                    SyncOverlayState();
+                    StateHasChanged();
+                });
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Normal during component disposal.
+        }
+    }
+
+    private void SyncOverlayState()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var isNowPlaying = PresentationViewModel.PlayButtonDisabled;
+        var currentSlideNumber = PresentationViewModel.Talk?.CurrentSlideNumber ?? 0;
+
+        if (isNowPlaying && !_isPlaying)
+        {
+            _presentationStartedAt = now - _totalElapsed;
+            _slideStartedAt = now - _slideElapsed;
+        }
+
+        if (_lastSlideNumber != 0 && currentSlideNumber != _lastSlideNumber)
+        {
+            _slideElapsed = TimeSpan.Zero;
+            _slideStartedAt = now;
+        }
+
+        if (isNowPlaying)
+        {
+            _totalElapsed = now - _presentationStartedAt;
+            _slideElapsed = now - _slideStartedAt;
+        }
+
+        _isPlaying = isNowPlaying;
+        _lastSlideNumber = currentSlideNumber;
+    }
+
+    private static string FormatDuration(TimeSpan duration)
+    {
+        var normalizedDuration = duration < TimeSpan.Zero ? TimeSpan.Zero : duration;
+        return normalizedDuration.TotalHours >= 1
+            ? normalizedDuration.ToString(@"hh\:mm\:ss")
+            : normalizedDuration.ToString(@"mm\:ss");
+    }
+
+    public void Dispose()
+    {
         PresentationViewModel.PropertyChanged -= PresentationViewModelOnPropertyChanged;
+        _overlayRefreshCts.Cancel();
+        _overlayRefreshCts.Dispose();
+    }
 }

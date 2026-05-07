@@ -48,6 +48,13 @@ public class PresentationViewModel : BaseViewModel, IDisposable
         get => _nextButtonDisabled;
         private set => SetValue(ref _nextButtonDisabled, value);
     }
+
+    public TimeSpan SlideDuration =>
+        Talk is { NumberOfSlides: > 0 }
+            ? TimeSpan.FromSeconds(TimeSpan.FromMinutes(_maxDurationInMinutes).TotalSeconds / Talk.NumberOfSlides)
+            : TimeSpan.Zero;
+
+    public TimeSpan PresentationDuration => TimeSpan.FromMinutes(_maxDurationInMinutes);
     
     public PresentationViewModel(IConfiguration configuration, ISessionRepository sessionRepository, ITimer timer)
     {
@@ -73,8 +80,7 @@ public class PresentationViewModel : BaseViewModel, IDisposable
         if (Talk is null)
             throw new TalkNotLoadedException("Please add a talk before starting the presentation");
         
-        var intervalTiming = TimeSpan.FromSeconds(TimeSpan.FromMinutes(_maxDurationInMinutes).TotalSeconds / Talk.NumberOfSlides).TotalMilliseconds;
-        _timer.Start(intervalTiming);
+        _timer.Start(SlideDuration.TotalMilliseconds);
         PlayButtonDisabled = true;
         UpdateButtonsState();
     }
@@ -88,9 +94,13 @@ public class PresentationViewModel : BaseViewModel, IDisposable
     public void PreviousSlide()
     {
         EnsureTalkLoaded();
-        Stop();
+        var wasPlaying = PlayButtonDisabled;
+        _timer.Stop();
         _talk!.PreviousSlide();
         CurrentSlide = GetFullSlidePath();
+
+        if (wasPlaying)
+            _timer.Start(SlideDuration.TotalMilliseconds);
 
         UpdateButtonsState();
     }
@@ -98,9 +108,13 @@ public class PresentationViewModel : BaseViewModel, IDisposable
     public void NextSlide()
     {
         EnsureTalkLoaded();
-        Stop();
+        var wasPlaying = PlayButtonDisabled;
+        _timer.Stop();
         _talk!.NextSlide();
         CurrentSlide = GetFullSlidePath();
+
+        if (wasPlaying)
+            _timer.Start(SlideDuration.TotalMilliseconds);
 
         UpdateButtonsState();
     }
@@ -108,11 +122,16 @@ public class PresentationViewModel : BaseViewModel, IDisposable
     private void TimerOnSheetTimeElapsed(object? sender, EventArgs e)
     {
         EnsureTalkLoaded();
-        _talk!.NextSlide();
-        CurrentSlide = GetFullSlidePath();
 
         if (_talk.LastSlideVisible)
+        {
             Stop();
+            UpdateButtonsState();
+            return;
+        }
+
+        _talk!.NextSlide();
+        CurrentSlide = GetFullSlidePath();
         
         UpdateButtonsState();
     }
