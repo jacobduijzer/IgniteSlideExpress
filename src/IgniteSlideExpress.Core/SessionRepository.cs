@@ -24,6 +24,13 @@ public class SessionRepository : ISessionRepository
         await Save(session);
     }
 
+    public async Task Update(Guid talkId, string title, string speaker)
+    {
+        var session = await Create();
+        session!.Update(talkId, title, speaker);
+        await Save(session);
+    }
+
     public async Task Delete(Guid talkId)
     {
         var session = await Create();

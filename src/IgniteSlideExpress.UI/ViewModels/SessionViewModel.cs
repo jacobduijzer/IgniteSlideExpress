@@ -32,6 +32,13 @@ public class SessionViewModel(
         var talkId = Guid.NewGuid();
         var numberOfPages = await pdf2Slides.ProcessPdf(talkId, pdfFile);
         await sessionRepository.Add(new Talk(talkId, title, speaker, numberOfPages));
+        _browserFiles = new List<IBrowserFile>();
+        await LoadSession();
+    }
+
+    public async Task UpdateTalk(Guid talkId, string title, string speaker)
+    {
+        await sessionRepository.Update(talkId, title, speaker);
         await LoadSession();
     }
 

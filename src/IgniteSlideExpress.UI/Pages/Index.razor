@@ -9,80 +9,144 @@
 
 <PageTitle>Ignite Slide Express</PageTitle>
 
-<div class="container">
-    
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Speaker</th>
-            <th>Slides</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var talk in SessionViewModel.Session.Talks
-            .Where(value => value is not null)
-            .Select((value, i) => new { i, value = value! }))
+@{
+    var talks = SessionViewModel.Session.Talks
+        .Where(value => value is not null)
+        .Select((value, i) => new { i, value = value! })
+        .ToList();
+}
+
+<div class="home-page">
+    <section class="home-panel talk-list-panel">
+        <div class="section-heading">
+            <div>
+                <h2>Talks</h2>
+            </div>
+            <div class="section-heading-actions">
+                <a class="btn btn-outline-primary btn-sm" href="#add-talk">+ New Talk</a>
+                <span class="talk-count">@talks.Count talks</span>
+            </div>
+        </div>
+
+        @if (talks.Count == 0)
         {
-            <tr>
-                <td>
-                    <NavLink class="nav-link" href="@($"presentation/{talk.value.Id}")" target="_blank">
-                        @talk.value.Title
-                    </NavLink>
-                </td>
-                <td>@talk.value.Speaker</td>
-                <td>@talk.value.NumberOfSlides</td>
-                <td>
-                    <div class="row">
-                        <div class="col-sm">
-                            @if (talk.i > 0)
-                            {
-                                <button class="oi-button-base oi-button-small oi--arrow-top" aria-hidden="true" @onclick="() => MoveUp(talk.value.Id)"></button>
-                            }
-                        </div>
-                        <div class="col-sm">
-                            @if (talk.i < SessionViewModel.Session.Talks.Count - 1)
-                            {
-                                <button class="oi-button-base oi-button-small oi--arrow-bottom" aria-hidden="true" @onclick="() => MoveDown(talk.value.Id)"></button>
-                            }
-                        </div>
-                        <div class="col-sm">
-                            <button class="oi-button-base oi-button-small oi--trash" aria-hidden="true" @onclick="() => Delete(talk.value.Id)"></button>
-                        </div>
-                    </div>
-                </td>
-            </tr>
+            <div class="empty-state">
+                <h3>No talks yet</h3>
+                <p>Add the first PDF deck below to build this session.</p>
+            </div>
         }
-        </tbody>
-    </table>
-    <EditForm Model=@_talk OnSubmit="FormSubmitted">
-    <table>
-        <tbody>
-            <tr>
-                <td>
-                    <InputText @bind-Value="_talk.Title"/>
-                </td>
-                <td>
-                    <InputText @bind-Value="_talk.Speaker"/>
-                </td>
-                <td>
-                    <InputFile OnChange="@LoadFiles"/>
-                </td>
-                <td>
-                    <input type="submit" value="Submit" class="btn btn-primary" disabled="@_isDisabled"/>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </EditForm>
+        else
+        {
+            <div class="talk-table-wrap">
+                <table class="table talk-table">
+                    <colgroup>
+                        <col class="talk-title-column" />
+                        <col class="talk-speaker-column" />
+                        <col class="talk-slides-column" />
+                        <col class="talk-actions-column" />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Speaker</th>
+                        <th>Slides</th>
+                        <th class="talk-actions-heading">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var talk in talks)
+                    {
+                        <tr>
+                            @if (_editingTalkId == talk.value.Id)
+                            {
+                                <td>
+                                    <input class="form-control" aria-label="Title" @bind="_editTalk.Title" />
+                                </td>
+                                <td>
+                                    <input class="form-control" aria-label="Speaker" @bind="_editTalk.Speaker" />
+                                </td>
+                                <td>@talk.value.NumberOfSlides</td>
+                                <td>
+                                    <div class="talk-actions">
+                                        <button class="btn btn-primary btn-sm" disabled="@IsEditDisabled" @onclick="SaveEdit">Save</button>
+                                        <button class="btn btn-outline-secondary btn-sm" @onclick="CancelEdit">Cancel</button>
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <NavLink class="talk-title-link" href="@($"presentation/{talk.value.Id}")" target="_blank">
+                                        @talk.value.Title
+                                    </NavLink>
+                                </td>
+                                <td>@talk.value.Speaker</td>
+                                <td>@talk.value.NumberOfSlides</td>
+                                <td>
+                                    <div class="talk-actions">
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                                title="Move up"
+                                                disabled="@(talk.i == 0)"
+                                                @onclick="() => MoveUp(talk.value.Id)">Up</button>
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                                title="Move down"
+                                                disabled="@(talk.i == talks.Count - 1)"
+                                                @onclick="() => MoveDown(talk.value.Id)">Down</button>
+                                        <a class="btn btn-info btn-sm text-white" href="@($"presentation/{talk.value.Id}")" target="_blank">Open</a>
+                                        <button class="btn btn-warning btn-sm" @onclick="() => StartEdit(talk.value)">Edit</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => Delete(talk.value.Id)">Delete</button>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="home-panel add-talk-panel" id="add-talk">
+        <div class="section-heading">
+            <div>
+                <h2>Add talk</h2>
+            </div>
+        </div>
+        <EditForm Model=@_newTalk OnSubmit="FormSubmitted">
+            <div class="add-talk-form">
+                <label>
+                    <span>Topic</span>
+                    <InputText class="form-control" @bind-Value="_newTalk.Title" />
+                </label>
+                <label>
+                    <span>Speaker</span>
+                    <InputText class="form-control" @bind-Value="_newTalk.Speaker" />
+                </label>
+                <label>
+                    <span>PDF deck</span>
+                    <InputFile class="form-control" OnChange="@LoadFiles" accept="application/pdf" />
+                </label>
+                <button type="submit" class="btn btn-primary" disabled="@IsAddDisabled">Add talk</button>
+            </div>
+        </EditForm>
+    </section>
 </div>
 
 @code {
 
-    private readonly TalkDto _talk = new();
-    private readonly List<IBrowserFile> _loadedFiles = new();
-    private bool _isDisabled = true;
+    private readonly TalkDto _newTalk = new();
+    private readonly TalkDto _editTalk = new();
+    private Guid? _editingTalkId;
+    private bool _hasSelectedFiles;
+
+    private bool IsAddDisabled =>
+        !_hasSelectedFiles ||
+        string.IsNullOrWhiteSpace(_newTalk.Title) ||
+        string.IsNullOrWhiteSpace(_newTalk.Speaker);
+
+    private bool IsEditDisabled =>
+        string.IsNullOrWhiteSpace(_editTalk.Title) ||
+        string.IsNullOrWhiteSpace(_editTalk.Speaker);
     
     protected override async Task OnInitializedAsync()
     {
@@ -97,15 +161,42 @@
 
     private void LoadFiles(InputFileChangeEventArgs e)
     {
-        // TODO loader
         SessionViewModel.AddFiles(e.GetMultipleFiles().ToList());
-        _isDisabled = false;
+        _hasSelectedFiles = true;
     }
 
     private async Task FormSubmitted()
     {
-        // TODO loader
-        await SessionViewModel.AddTalk(_talk.Title, _talk.Speaker);
+        if (IsAddDisabled)
+            return;
+
+        await SessionViewModel.AddTalk(_newTalk.Title.Trim(), _newTalk.Speaker.Trim());
+        _newTalk.Title = string.Empty;
+        _newTalk.Speaker = string.Empty;
+        _hasSelectedFiles = false;
+    }
+
+    private void StartEdit(Talk talk)
+    {
+        _editingTalkId = talk.Id;
+        _editTalk.Title = talk.Title;
+        _editTalk.Speaker = talk.Speaker;
+    }
+
+    private void CancelEdit()
+    {
+        _editingTalkId = null;
+        _editTalk.Title = string.Empty;
+        _editTalk.Speaker = string.Empty;
+    }
+
+    private async Task SaveEdit()
+    {
+        if (_editingTalkId is null || IsEditDisabled)
+            return;
+
+        await SessionViewModel.UpdateTalk(_editingTalkId.Value, _editTalk.Title.Trim(), _editTalk.Speaker.Trim());
+        CancelEdit();
     }
     
     private async Task MoveUp(Guid talkId) =>

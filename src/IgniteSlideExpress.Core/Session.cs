@@ -21,6 +21,23 @@ public class Session
         var talk = Talks.FirstOrDefault(x => x != null && x.Id.Equals(talkId));
         Talks.Remove(talk!);
     }
+
+    public void Update(Guid talkId, string title, string speaker)
+    {
+        var index = Talks.IndexOf(Talks.FirstOrDefault(x => x != null && x.Id.Equals(talkId)));
+        if (index < 0)
+            return;
+
+        if (Talks.Any(existingTalk =>
+                existingTalk != null &&
+                !existingTalk.Id.Equals(talkId) &&
+                existingTalk.Title.Equals(title) &&
+                existingTalk.Speaker.Equals(speaker)))
+            throw new Exception("No talks with the same title and speaker please");
+
+        var talk = Talks[index]!;
+        Talks[index] = talk with { Title = title, Speaker = speaker };
+    }
     
     public void MoveUp(Guid talkId)
     {

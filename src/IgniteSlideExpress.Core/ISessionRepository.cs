@@ -8,6 +8,8 @@ public interface ISessionRepository
     
     Task Add(Talk talk);
 
+    Task Update(Guid talkId, string title, string speaker);
+
     Task Delete(Guid talkId);
 
     Task MoveUp(Guid talkId);
